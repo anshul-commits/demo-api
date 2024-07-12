@@ -1,5 +1,6 @@
 from ninja import NinjaAPI, Schema, Path
 import datetime
+from .models import Book, BookSchema
 
 api = NinjaAPI()
 # Example: Basic GET Request i.e. https://localhost:8000/api/hello
@@ -67,3 +68,13 @@ def me(request):
     if not request.user.is_authenticated:
         return 403, {"message": "Please sign in first"}
     return request.user 
+
+@api.post("/add-book")
+def add_book(request, payload: BookSchema):
+    book = Book.objects.create(
+        title=payload.title,
+        author=payload.author,
+        published_date=payload.published_date,
+        isbn=payload.isbn
+    )
+    return {"id": book.id, "message": "Book added successfully"}
